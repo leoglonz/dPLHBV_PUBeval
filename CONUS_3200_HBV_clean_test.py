@@ -383,7 +383,7 @@ streamflow_trans = _basin_norm(
                     )  ## from ft^3/s to mm/day
 
 
-rootOut = "/data/yxs275/DPL_HBV/CONUS_3200_Output/" + '/dPL_local_daymet_new_attr/'
+rootOut = '/data/lgl5139/DPL_HBV/CONUS_3200_Output/' + '/dPL_local_daymet_new_attr/'
 if os.path.exists(rootOut) is False:
     os.mkdir(rootOut)
 out = os.path.join(rootOut, "exp_EPOCH50_BS100_RHO365_HS512_trainBuff365")  # output folder to save results
