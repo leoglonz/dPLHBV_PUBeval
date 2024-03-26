@@ -208,6 +208,7 @@ def cal_4_stat_inds(b):
         std = 1
     return [p10, p90, mean, std]
 
+
 def cal_stat_gamma(x):
     """
     Try to transform a time series data to normal distribution
@@ -424,7 +425,7 @@ lossFun = crit.RmseLossComb(alpha=alpha)
 
 
 
-rootOut = "/data/yxs275/DPL_HBV/CONUS_3200_Output/"+'/dPL_local_daymet_new_attr/'
+rootOut = '/data/lgl5139/DPL_HBV/CONUS_3200_Output/'+'/dPL_local_daymet_new_attr/'
 if os.path.exists(rootOut) is False:
     os.mkdir(rootOut)
 out = os.path.join(rootOut, f"exp_EPOCH{EPOCH}_BS{BATCH_SIZE}_RHO{RHO}_HS{HIDDENSIZE}_trainBuff{BUFFTIME}") # output folder to save results

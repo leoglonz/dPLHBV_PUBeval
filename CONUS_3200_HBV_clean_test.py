@@ -6,6 +6,7 @@ from hydroDL.data import camels
 from hydroDL.post import plot, stat
 from hydroDL.master import loadModel
 from sklearn.model_selection import KFold
+
 import torch.nn.functional as F
 import os
 import numpy as np
@@ -25,6 +26,7 @@ np.random.seed(randomseed)
 torch.cuda.manual_seed(randomseed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
+
 
 def _basin_norm(
     x: np.array, basin_area: np.array, to_norm: bool
@@ -258,6 +260,7 @@ def cal_stat(x: np.array) -> list:
         b = np.array([0])
     return cal_4_stat_inds(b)
 
+
 def fill_Nan(array_3d):
     # Define the x-axis for interpolation
     x = np.arange(array_3d.shape[1])
@@ -277,6 +280,7 @@ def fill_Nan(array_3d):
                 # Perform linear interpolation using numpy.interp
                 array_3d[i, :, j] = np.interp(x, x[non_nans], slice_1d[non_nans], left=None, right=None)
     return array_3d
+
 ## GPU setting
 # which GPU to use when having multiple
 traingpuid = 6
