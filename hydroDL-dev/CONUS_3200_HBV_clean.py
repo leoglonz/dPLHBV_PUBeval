@@ -276,20 +276,26 @@ def fill_Nan(array_3d):
 
 ## GPU setting
 # which GPU to use when having multiple
-traingpuid = 4
+traingpuid = 7
 torch.cuda.set_device(traingpuid)
 
 ## streamflow data I extracted from USGS
-data_folder = "/data/yxs275/CONUS_data/FromGAGEII/generate_for_CONUS_3200/gages/dataCONUS3200/"
+data_folder = '/data/yxs275/CONUS_data/FromGAGEII/generate_for_CONUS_3200/gages/dataCONUS3200/'
 
 
 with open(data_folder+'train_data_dict.json') as f:
     train_data_dict = json.load(f)
 
+## Change time span here for different trainings.
 ## Time span of Daymet
+t_start = train_data_dict["t_final_range"][0]
+t_end = '1985-10-01'  #train_data_dict["t_final_range"][-1]
+Tex = [19801001, 19851001]  # For calculating PET, should be [t_start, t_end].
+
 AllTime = pd.date_range('1980-01-01', f'2020-12-31', freq='d')
-index_start = AllTime.get_loc(train_data_dict["t_final_range"][0])
-index_end = AllTime.get_loc(train_data_dict["t_final_range"][-1])
+index_start = AllTime.get_loc(t_start)
+index_end = AllTime.get_loc(t_end)
+print('Training from ', t_start, ' to ', t_end)
 
 ## Slice Daymet data for the time span where we have streamflow data
 forcingAll = np.load("/data/yxs275/CONUS_data/FromGAGEII/generate_for_CONUS_3200/allBasin_localDaymet.npy")[:,index_start:index_end,:]
@@ -357,8 +363,6 @@ for aid, attribute_item in enumerate (attributeLst):
     stat_dict[attribute_item] = cal_stat(attribute[:,aid])
 
 ##Use tmean to caculate PET
-Tex = [19801001, 19951001]
-
 tmin = np.swapaxes(forcingAll[:,:,np.where(np.array(forcingAllLst) == "tmin")[0][0]], 0,1)
 tmax = np.swapaxes(forcingAll[:,:,np.where(np.array(forcingAllLst) == "tmax")[0][0]], 0,1)
 
@@ -427,10 +431,10 @@ lossFun = crit.RmseLossComb(alpha=alpha)
 
 rootOut = '/data/lgl5139/DPL_HBV/CONUS_3200_Output/'+'/dPL_local_daymet_new_attr/'
 if os.path.exists(rootOut) is False:
-    os.mkdir(rootOut)
-out = os.path.join(rootOut, f"exp_EPOCH{EPOCH}_BS{BATCH_SIZE}_RHO{RHO}_HS{HIDDENSIZE}_trainBuff{BUFFTIME}") # output folder to save results
+    os.makedirs(rootOut)
+out = os.path.join(rootOut, f'exp_EPOCH{EPOCH}_BS{BATCH_SIZE}_RHO{RHO}_HS{HIDDENSIZE}_trainBuff{BUFFTIME}_t{str(Tex[0])[:4]}_{str(Tex[1])[:4]}') # output folder to save results
 if os.path.exists(out) is False:
-    os.mkdir(out)
+    os.makedirs(out)
 
 with open(out+'/dapengscaler_stat.json','w') as f:
     json.dump(stat_dict, f)
